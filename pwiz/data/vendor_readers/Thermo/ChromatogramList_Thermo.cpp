@@ -249,8 +249,8 @@ PWIZ_API_DECL ChromatogramPtr ChromatogramList_Thermo::chromatogram(size_t index
             {
                 ChromatogramDataPtr cd = rawfile_->getChromatogramData(
                     Type_MassRange, "", 0, 0, 0, rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
-                pwiz::msdata::TimeIntensityPair* data = reinterpret_cast<pwiz::msdata::TimeIntensityPair*>(cd->data());
-                if (getBinaryData) result->setTimeIntensityPairs(data, cd->size(), UO_minute, MS_number_of_detector_counts);
+                pwiz::msdata::TimeIntensityPair* _data = reinterpret_cast<pwiz::msdata::TimeIntensityPair*>(cd->data());
+                if (getBinaryData) result->setTimeIntensityPairs(_data, cd->size(), UO_minute, MS_number_of_detector_counts);
                 else result->defaultArrayLength = cd->size();
             }
             break;
