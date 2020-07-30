@@ -2339,6 +2339,7 @@ RawFileImpl::getChromatogramData(ChromatogramType traceType,
     try
     {
         vector<double> times, intensities;
+#ifndef _WIN64
         _bstr_t bstrFilter(filter.c_str());
         _bstr_t bstrMassRange = massRangeFrom == 0 && massRangeTo == 0 ? "" : (boost::format("%.10g-%.10g", std::locale::classic()) % massRangeFrom % massRangeTo).str().c_str();
         _variant_t variantChromatogramData;
@@ -2360,6 +2361,16 @@ RawFileImpl::getChromatogramData(ChromatogramType traceType,
             times.push_back(timeIntensityPairs[i].time);
             intensities.push_back(timeIntensityPairs[i].intensity);
         }
+#else
+        auto ranges = gcnew array<Thermo::Range^> { gcnew Thermo::Range(massRangeFrom, massRangeTo) };
+        auto settings = gcnew array<Thermo::ChromatogramTraceSettings^> { gcnew Thermo::ChromatogramTraceSettings(ToSystemString(filter), ranges) };
+        settings[0]->DelayInMin = delay;
+        settings[0]->Trace = (Thermo::TraceType) traceType;
+
+        auto chroData = raw_->GetChromatogramData(settings, raw_->ScanNumberFromRetentionTime(startTime), raw_->ScanNumberFromRetentionTime(endTime));
+        ToStdVector(chroData->PositionsArray[0], times);
+        ToStdVector(chroData->IntensitiesArray[0], intensities);
+#endif
         return ChromatogramDataPtr(new ChromatogramDataImpl(times, intensities, startTime, endTime));
     }
     CATCH_AND_FORWARD
