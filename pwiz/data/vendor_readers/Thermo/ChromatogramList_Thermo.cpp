@@ -7,16 +7,16 @@
 // Copyright 2008 Spielberg Family Center for Applied Proteomics
 //   Cedars-Sinai Medical Center, Los Angeles, California  90048
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
 // http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
@@ -61,7 +61,7 @@ PWIZ_API_DECL const ChromatogramIdentity& ChromatogramList_Thermo::chromatogramI
 {
     boost::call_once(indexInitialized_.flag, boost::bind(&ChromatogramList_Thermo::createIndex, this));
     if (index>size())
-        throw runtime_error(("[ChromatogramList_Thermo::chromatogramIdentity()] Bad index: " 
+        throw runtime_error(("[ChromatogramList_Thermo::chromatogramIdentity()] Bad index: "
                             + lexical_cast<string>(index)).c_str());
     return reinterpret_cast<const ChromatogramIdentity&>(index_[index]);
 }
@@ -88,7 +88,7 @@ PWIZ_API_DECL ChromatogramPtr ChromatogramList_Thermo::chromatogram(size_t index
 {
     boost::call_once(indexInitialized_.flag, boost::bind(&ChromatogramList_Thermo::createIndex, this));
     if (index>size())
-        throw runtime_error(("[ChromatogramList_Thermo::chromatogram()] Bad index: " 
+        throw runtime_error(("[ChromatogramList_Thermo::chromatogram()] Bad index: "
                             + lexical_cast<string>(index)).c_str());
 
     const IndexEntry& ci = index_[index];
@@ -235,12 +235,21 @@ PWIZ_API_DECL ChromatogramPtr ChromatogramList_Thermo::chromatogram(size_t index
             }
             break;
 
-            case MS_emission_chromatogram: // UV: generate "ECD" chromatogram for entire run
+            // case MS_emission_chromatogram: // UV: generate "ECD" chromatogram for entire run
+            // {
+            //     ChromatogramDataPtr cd = rawfile_->getChromatogramData(
+            //         Type_ECD, "", 0, 0, 0,
+            //         rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
+            //     if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, UO_absorbance_unit);
+            //     else result->defaultArrayLength = cd->size();
+            // }
+            // break;
+            case MS_photodiode_array_detector:
             {
                 ChromatogramDataPtr cd = rawfile_->getChromatogramData(
-                    Type_ECD, "", 0, 0, 0,
+                    Type_MassRange, "", 0, 0, 0,
                     rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
-                if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, UO_absorbance_unit);
+                if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, MS_number_of_detector_counts);
                 else result->defaultArrayLength = cd->size();
             }
             break;
@@ -403,19 +412,20 @@ PWIZ_API_DECL void ChromatogramList_Thermo::createIndex() const
 
                 case Controller_UV:
                 {
-                    auto instrumentData = rawfile_->getInstrumentData();
-                    if (bal::ends_with(instrumentData.Units, "AbsorbanceUnits") && instrumentData.AxisLabelY.empty())
-                    {
-                        addChromatogram("UV " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_emission_chromatogram, "");
-                    }
-                    else if (instrumentData.AxisLabelY == "pA") // picoamperes?
-                    {
-                        addChromatogram("CAD " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_TIC_chromatogram, "");
-                    }
-                    else
-                    {
-                        // TODO: pressure/flow chromatogram
-                    }
+                    // auto instrumentData = rawfile_->getInstrumentData();
+                    // if (bal::ends_with(instrumentData.Units, "AbsorbanceUnits") && instrumentData.AxisLabelY.empty())
+                    // {
+                    //     addChromatogram("UV " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_emission_chromatogram, "");
+                    // }
+                    // else if (instrumentData.AxisLabelY == "pA") // picoamperes?
+                    // {
+                    //     addChromatogram("CAD " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_TIC_chromatogram, "");
+                    // }
+                    // else
+                    // {
+                    //     // TODO: pressure/flow chromatogram
+                    // }
+                    addChromatogram("UV", (ControllerType)controllerType, n, MS_photodiode_array_detector, "")
                 }
                 break; // case Controller_UV
 
