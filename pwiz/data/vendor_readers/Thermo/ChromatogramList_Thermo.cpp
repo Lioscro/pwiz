@@ -235,15 +235,16 @@ PWIZ_API_DECL ChromatogramPtr ChromatogramList_Thermo::chromatogram(size_t index
             }
             break;
 
-            // case MS_emission_chromatogram: // UV: generate "ECD" chromatogram for entire run
-            // {
-            //     ChromatogramDataPtr cd = rawfile_->getChromatogramData(
-            //         Type_ECD, "", 0, 0, 0,
-            //         rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
-            //     if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, UO_absorbance_unit);
-            //     else result->defaultArrayLength = cd->size();
-            // }
-            // break;
+            case MS_emission_chromatogram: // UV: generate "ECD" chromatogram for entire run
+            {
+                ChromatogramDataPtr cd = rawfile_->getChromatogramData(
+                    Type_ECD, "", 0, 0, 0,
+                    rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
+                if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, UO_absorbance_unit);
+                else result->defaultArrayLength = cd->size();
+            }
+            break;
+
             case MS_photodiode_array_detector:
             {
                 ChromatogramDataPtr cd = rawfile_->getChromatogramData(
@@ -412,20 +413,19 @@ PWIZ_API_DECL void ChromatogramList_Thermo::createIndex() const
 
                 case Controller_UV:
                 {
-                    // auto instrumentData = rawfile_->getInstrumentData();
-                    // if (bal::ends_with(instrumentData.Units, "AbsorbanceUnits") && instrumentData.AxisLabelY.empty())
-                    // {
-                    //     addChromatogram("UV " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_emission_chromatogram, "");
-                    // }
-                    // else if (instrumentData.AxisLabelY == "pA") // picoamperes?
-                    // {
-                    //     addChromatogram("CAD " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_TIC_chromatogram, "");
-                    // }
-                    // else
-                    // {
-                    //     // TODO: pressure/flow chromatogram
-                    // }
-                    addChromatogram("UV", (ControllerType)controllerType, n, MS_photodiode_array_detector, "")
+                    auto instrumentData = rawfile_->getInstrumentData();
+                    if (bal::ends_with(instrumentData.Units, "AbsorbanceUnits") && instrumentData.AxisLabelY.empty())
+                    {
+                        addChromatogram("UV " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_emission_chromatogram, "");
+                    }
+                    else if (instrumentData.AxisLabelY == "pA") // picoamperes?
+                    {
+                        addChromatogram("CAD " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_TIC_chromatogram, "");
+                    }
+                    else
+                    {
+                        addChromatogram("UV " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_photodiode_array_detector, "");
+                    }
                 }
                 break; // case Controller_UV
 
