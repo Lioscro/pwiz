@@ -7,16 +7,16 @@
 // Copyright 2005 Louis Warschaw Prostate Cancer Center
 //   Cedars Sinai Medical Center, Los Angeles, California  90048
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
 // http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
@@ -280,7 +280,7 @@ RawFileImpl::RawFileImpl(const string& filename)
     instrumentModel_(InstrumentModelType_Unknown)
 {
     try
-    {        
+    {
         // if file is on a network drive, copy it to a temporary local file
         /*if (::PathIsNetworkPath(filename.c_str()))
         {
@@ -1235,7 +1235,7 @@ ScanInfoImpl::ScanInfoImpl(long scanNumber, const RawFileImpl* raw)
 ScanInfoImpl::ScanInfoImpl(long scanNumber, const RawFileThreadImpl* raw)
 #endif
 :   scanNumber_(scanNumber),
-    rawfile_(raw)    
+    rawfile_(raw)
 {
     initialize();
 }
@@ -1343,7 +1343,7 @@ void ScanInfoImpl::initialize()
                                                                     &channelCount_,
                                                                     &isUniformTime,
                                                                     &frequency_);
-            if (hr != 0) 
+            if (hr != 0)
                 checkResult(rawfile_->raw_->GetStartTime(&startTime_));
 #else
             auto scanStats = rawfile_->raw_->GetScanStatsForScanNumber(scanNumber_);
@@ -1476,7 +1476,7 @@ void ScanInfoImpl::initTrailerExtraHelper() const
         }
 
         if (trailerExtraLabels_.size() != trailerExtraValues_.size())
-            throw RawEgg("[ScanInfoImpl::initTrailerExtra()] Trailer Extra sizes do not match."); 
+            throw RawEgg("[ScanInfoImpl::initTrailerExtra()] Trailer Extra sizes do not match.");
 
         for (int i=0; i < trailerExtraLabels_.size(); i++)
             trailerExtraMap_[trailerExtraLabels_[i]] = trailerExtraValues_[i];
@@ -1976,7 +1976,7 @@ void RawFileImpl::parseInstrumentMethod()
                 defaultIsolationWidthBySegmentAndMsLevel[scanSegment][msLevel] = isolationWidth;
                 continue;
             }
-            
+
             if (regex_match(line, what, defaultIsolationWindowRegex))
             {
                 double isolationWidth = lexical_cast<double>(what[1]);
@@ -2339,7 +2339,6 @@ RawFileImpl::getChromatogramData(ChromatogramType traceType,
     try
     {
         vector<double> times, intensities;
-#ifndef _WIN64
         _bstr_t bstrFilter(filter.c_str());
         _bstr_t bstrMassRange = massRangeFrom == 0 && massRangeTo == 0 ? "" : (boost::format("%.10g-%.10g", std::locale::classic()) % massRangeFrom % massRangeTo).str().c_str();
         _variant_t variantChromatogramData;
@@ -2361,16 +2360,6 @@ RawFileImpl::getChromatogramData(ChromatogramType traceType,
             times.push_back(timeIntensityPairs[i].time);
             intensities.push_back(timeIntensityPairs[i].intensity);
         }
-#else
-        auto ranges = gcnew array<Thermo::Range^> { gcnew Thermo::Range(massRangeFrom, massRangeTo) };
-        auto settings = gcnew array<Thermo::ChromatogramTraceSettings^> { gcnew Thermo::ChromatogramTraceSettings(ToSystemString(filter), ranges) };
-        settings[0]->DelayInMin = delay;
-        settings[0]->Trace = (Thermo::TraceType) traceType;
-
-        auto chroData = raw_->GetChromatogramData(settings, raw_->ScanNumberFromRetentionTime(startTime), raw_->ScanNumberFromRetentionTime(endTime));
-        ToStdVector(chroData->PositionsArray[0], times);
-        ToStdVector(chroData->IntensitiesArray[0], intensities);
-#endif
         return ChromatogramDataPtr(new ChromatogramDataImpl(times, intensities, startTime, endTime));
     }
     CATCH_AND_FORWARD

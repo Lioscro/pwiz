@@ -248,7 +248,7 @@ PWIZ_API_DECL ChromatogramPtr ChromatogramList_Thermo::chromatogram(size_t index
             case MS_photodiode_array_detector:
             {
                 ChromatogramDataPtr cd = rawfile_->getChromatogramData(
-                    Type_MassRange, "", 0, 0, 0, 0, rawfile_->getLastScanTime());
+                    Type_MassRange, "", 0, 0, 0, rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
                 if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, MS_number_of_detector_counts);
                 else result->defaultArrayLength = cd->size();
             }
