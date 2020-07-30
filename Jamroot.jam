@@ -7,21 +7,21 @@
 # Copyright 2008 Spielberg Family Center for Applied Proteomics
 #   Cedars-Sinai Medical Center, Los Angeles, California  90048
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); 
-# you may not use this file except in compliance with the License. 
-# You may obtain a copy of the License at 
-# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software 
-# distributed under the License is distributed on an "AS IS" BASIS, 
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-# See the License for the specific language governing permissions and 
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
 # limitations under the License.
 
-if ( "--help" in [ modules.peek : ARGV ] ) 
+if ( "--help" in [ modules.peek : ARGV ] )
 {      # slip our own help text in here
-ECHO 
+ECHO
 ################################
 ## Targets and Related Options #
 ################################
@@ -40,9 +40,9 @@ ECHO
 #                                     your willingness to comply with
 #                                     license terms of the vendor DLLs
 #                                     that enable reading of proprietary
-#                                     binary data formats.  Without this 
+#                                     binary data formats.  Without this
 #                                     switch your build will not include
-#                                     support for reading vendor binary 
+#                                     support for reading vendor binary
 #                                     files.
 #
 #   --incremental           Skip the checks for extracting external library
@@ -65,8 +65,8 @@ ECHO
 #   msconvert (just the command-line executable, copied to <BUILD_DIR>/<TOOLSET_DIR>)
 #   executables (all the pwiz core tools, copied to <BUILD_DIR>/<TOOLSET_DIR>)
 #
-#   If you just want to build a specific subset of pwiz, add a target to 
-# your command line.  For example to build just the msdata file 
+#   If you just want to build a specific subset of pwiz, add a target to
+# your command line.  For example to build just the msdata file
 # read/write stuff, add:
 #
 #   pwiz/data/msdata
@@ -88,7 +88,7 @@ if "address-model=64" in [ modules.peek : ARGV ] || ( ! ( $(.os) = "NT" ) && $(.
     constant PROCESSOR_ARCHITECTURE : "AMD64" ;
     constant PLATFORM : "x64" ;
 }
-else if "address-model=32" in [ modules.peek : ARGV ] || $(.platform:L) = "x86" || $(.os) = "NT" 
+else if "address-model=32" in [ modules.peek : ARGV ] || $(.platform:L) = "x86" || $(.os) = "NT"
 {
     constant PROCESSOR_ARCHITECTURE : "x86" ;
     constant PLATFORM : "x86" ;
@@ -161,7 +161,7 @@ rule without-mz5 ( properties * )
    {
        return <location-prefix>without-mz5 <define>WITHOUT_MZ5 ;
    }
-   else 
+   else
    {
        return [ without-binary-msdata $(properties) ] ;
    }
@@ -206,7 +206,7 @@ if --teamcity-test-decoration in [ modules.peek : ARGV ]
     else
     {
         TEST_PRECOMMAND = "pp=##\necho $pp\"teamcity[testStarted name='$name']\"" ;
-        TEST_POSTCOMMAND = 
+        TEST_POSTCOMMAND =
             "pp=##"
             "if test $status -ne 0 ; then"
                 "echo $pp\"teamcity[testFailed name='$name' message='Exit status: $status']\" ;"
@@ -214,7 +214,7 @@ if --teamcity-test-decoration in [ modules.peek : ARGV ]
             "echo $pp\"teamcity[testFinished name='$name']\"" ;
         TEST_POSTCOMMAND = $(TEST_POSTCOMMAND:J=\n) ;
     }
-    
+
     # put raw commands in global module
     modules.poke : TEST_PRECOMMAND : $(TEST_PRECOMMAND) ;
     modules.poke : TEST_POSTCOMMAND : $(TEST_POSTCOMMAND) ;
@@ -224,7 +224,7 @@ if --teamcity-test-decoration in [ modules.peek : ARGV ]
 
 
 # return the itemname if textonly build is off (the default)
-rule binary-readers-build ( itemname )  
+rule binary-readers-build ( itemname )
 {
     if ( ! [ without-binary-msdata ] )
     {
@@ -234,7 +234,7 @@ rule binary-readers-build ( itemname )
 
 
 # return the itemname if mz5 build is on (the default)
-rule mz5-build ( itemname )  
+rule mz5-build ( itemname )
 {
     if ( ! [ without-mz5 ] )
     {
@@ -250,7 +250,7 @@ if ! [ modules.peek : NT ]
     {
     }
 
-    PREDEF_CHECKS = 
+    PREDEF_CHECKS =
     # starting with gcc 4.8, gcc is extremely verbose about unused typedefs; heavily used in Boost concept checks
     [ predef-check "BOOST_COMP_GNUC >= 4.8" : : <cxxflags>-Wno-unused-local-typedefs ]
 
@@ -260,8 +260,8 @@ if ! [ modules.peek : NT ]
 }
 
 
-project pwiz 
-    : requirements 
+project pwiz
+    : requirements
         <include>$(PWIZ_ROOT_PATH)
         <include>$(PWIZ_LIBRARIES_PATH)/boost_aux
         <include>$(boost_src)
@@ -283,8 +283,8 @@ project pwiz
 
         # special msvc hacks
         <toolset>msvc:<define>WIN32                     # windows
-        <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE  # don't deprecate the standard library 
-        <toolset>msvc:<define>_SCL_SECURE_NO_DEPRECATE  # don't deprecate the standard library 
+        <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE  # don't deprecate the standard library
+        <toolset>msvc:<define>_SCL_SECURE_NO_DEPRECATE  # don't deprecate the standard library
         <toolset>msvc:<define>_USE_MATH_DEFINES         # for M_PI in <cmath>
         <toolset>msvc:<define>BOOST_ALL_NO_LIB          # disable auto-link
         <toolset>msvc:<cxxflags>/wd4100                 # warning: unreferenced formal parameter
@@ -309,10 +309,10 @@ project pwiz
         # target Windows 7 or later
         <toolset>msvc:<define>_WIN32_WINNT=_WIN32_WINNT_WIN7
         <toolset>msvc:<define>NTDDI_VERSION=NTDDI_WIN7
-        
+
         <conditional>@secure-scl-throws
 
-        <toolset>gcc:<cxxflags>-Wno-uninitialized       # warning: '__cur' might be used uninitialized in this function 
+        <toolset>gcc:<cxxflags>-Wno-uninitialized       # warning: '__cur' might be used uninitialized in this function
 
         # set standard to C++14
         <toolset>gcc:<cxxflags>-std=c++14
@@ -338,9 +338,9 @@ project pwiz
         <toolset>darwin:<cxxflags>-Wno-unknown-pragmas
 
         $(PREDEF_CHECKS)
-        
+
         # special Cygwin gcc-3.4.4 hack
-        # linker "multiple definition" error on inclusion of boost-1.34.1 filesystem headers  
+        # linker "multiple definition" error on inclusion of boost-1.34.1 filesystem headers
         <toolset>gcc-3.4.4:<linkflags>-Wl,--allow-multiple-definition
         <toolset>gcc-mingw-3.4.5:<linkflags>-Wl,--allow-multiple-definition
         <toolset-gcc:flavor>mingw:<linkflags>-Wl,--allow-multiple-definition
@@ -351,17 +351,17 @@ project pwiz
 
         # any GCC executable that uses shared libraries must have all its code built with -fPIC
         <conditional>@static-with-fpic
-        
+
         # mz5 support?
-        <conditional>@without-mz5 
-        
+        <conditional>@without-mz5
+
         # msdata text only?
-        <conditional>@without-binary-msdata 
+        <conditional>@without-binary-msdata
 
         # don't call 'strip' -- causes 'Bus error' in some cases
         #  e.g. find_if with inline predicate
         <toolset>darwin:<debug-symbols>on
-        
+
         # use of boost::thread requires multithreaded runtime
         <threading>multi
 
@@ -389,10 +389,10 @@ project pwiz
 
 # external library declarations
 
-lib pthread 
+lib pthread
     : # sources
     : # requirements
-        <name>pthread  
+        <name>pthread
         <link>shared
         <toolset>gcc:<linkflags>-pthread # sometimes segfault without this -- dk
     : # default-build
@@ -809,17 +809,17 @@ option.set prefix : $(default-prefix) ;
 
 local headers = [ path.glob-tree pwiz : *.h *.hpp : .svn ] ;
 package.install install-pwiz-lib
-    : <install-source-root>$(PWIZ_ROOT_PATH) 
+    : <install-source-root>$(PWIZ_ROOT_PATH)
     : # executables
     : pwiz
-    : $(headers) 
+    : $(headers)
     ;
 explicit install-pwiz-lib ;
 
 # move boost headers separately because install-source-root is different
 local boost_headers = [ path.glob-tree $(BOOST_SOURCE)/boost : *.h *.hpp : .svn ] ;
 package.install install-boost-headers
-    : <install-source-root>$(BOOST_SOURCE) 
+    : <install-source-root>$(BOOST_SOURCE)
     : # exe
     : # lib
     : $(boost_headers)
@@ -828,7 +828,7 @@ explicit install-boost-headers ;
 
 
 # warning: _SECURE_SCL_THROWS is deprecated
-# checked iterators throw instead of crash  
+# checked iterators throw instead of crash
 rule secure-scl-throws ( properties * )
 {
     if <toolset>msvc in $(properties) &&
@@ -875,9 +875,10 @@ rule msvc-dotnet-requirement ( properties * )
 rule no-express-requirement ( properties * )
 {
     # only the latest, non-express version of MSVC
-    if ! ( <toolset-msvc:version>12.0 in $(properties) || 
-           <toolset-msvc:version>14.0 in $(properties) || 
-           <toolset-msvc:version>14.1 in $(properties) )
+    if ! ( <toolset-msvc:version>12.0 in $(properties) ||
+           <toolset-msvc:version>14.0 in $(properties) ||
+           <toolset-msvc:version>14.1 in $(properties) ||
+           <toolset-msvc:version>14.2 in $(properties) )
     { return <build>no ; }
     if 12.0express in $(properties:G=) { return <build>no ; }
 }
@@ -902,7 +903,7 @@ if [ modules.peek : NT ]
         {
             EXIT "\n*** ERROR: It is not possible to build or run a 64-bit build on 32-bit Windows." ;
         }
-        
+
         # MSFileReader install directory
         constant ProgramFilesLibs : "C:\\Program Files" ;
         constant MSFILEREADER_SUFFIX : "_x64" ;
@@ -954,7 +955,7 @@ rule bruker-dll-location ( api-path : properties * )
 
     if --i-agree-to-the-vendor-licenses in [ modules.peek : ARGV ] &&
        $(result) &&
-       [ path.exists $(result)\\CompassXtractMS.dll ]            
+       [ path.exists $(result)\\CompassXtractMS.dll ]
     {
         return $(result) ;
     }
@@ -996,7 +997,7 @@ rule mhdac-dll-location ( api-path : properties * )
 
     if --i-agree-to-the-vendor-licenses in [ modules.peek : ARGV ] &&
        $(result) &&
-       [ path.exists $(result)\\MassSpecDataReader.dll ]            
+       [ path.exists $(result)\\MassSpecDataReader.dll ]
     {
         return $(result) ;
     }
@@ -1005,7 +1006,7 @@ rule mhdac-dll-location ( api-path : properties * )
 rule masslynxraw-dll-location ( api-path : properties * )
 {
     local result ;
-    if <toolset>msvc in $(properties) 
+    if <toolset>msvc in $(properties)
     {
         if ( [ MATCH (x64) : $(PLATFORM) ] )
         {
@@ -1019,7 +1020,7 @@ rule masslynxraw-dll-location ( api-path : properties * )
 
     if --i-agree-to-the-vendor-licenses in [ modules.peek : ARGV ] &&
        $(result) &&
-       [ path.exists $(result)\\MassLynxRaw.dll ]            
+       [ path.exists $(result)\\MassLynxRaw.dll ]
     {
         return $(result) ;
     }
@@ -1054,7 +1055,7 @@ rule msparser-path ( properties * )
         {
             lib-location = "$(ProgramFilesLibs)\\Matrix Science\\Mascot Parser\\vs2013" ;
         }
-        else if [ feature.get-values <toolset-msvc:version> : $(properties) ] in "14.0" "14.1"
+        else if [ feature.get-values <toolset-msvc:version> : $(properties) ] in "14.0" "14.1" "14.2"
         {
             lib-location = "$(ProgramFilesLibs)\\Matrix Science\\Mascot Parser\\vs2015" ;
         }
@@ -1067,7 +1068,7 @@ rule msparser-path ( properties * )
             }
             lib-location = "" ;
         }
-    } 
+    }
     else if <toolset>gcc in $(properties)
     {
         lib-location = "/usr/local/msparser/gnu" ;
@@ -1082,7 +1083,7 @@ rule msparser-path ( properties * )
         lib-location = "" ;
     }
 
-    if [ without-binary-msdata ] 
+    if [ without-binary-msdata ]
     {
         if ! $(.warn-once)
         {
@@ -1112,7 +1113,7 @@ rule msparser-path ( properties * )
     else if ! $(.warn-once)
     {
         .warn-once = true ;
-        
+
         if $(lib-location)
         {
             echo "Warning: No Mascot Parser found at $(lib-location)." ;
@@ -1161,67 +1162,67 @@ rule msparser-usage-requirements ( properties * )
 searched-lib msparser : : <conditional>@msparser-requirements : : <conditional>@msparser-usage-requirements ;
 
 
-.msvcrt-x86 = 
-    Microsoft.VC110.CRT/x86/msvcp110.dll 
-    Microsoft.VC110.CRT/x86/msvcr110.dll 
-    Microsoft.VC110.CRT/x86/vcomp110.dll 
-    Microsoft.VC120.CRT/x86/msvcp120.dll 
-    Microsoft.VC120.CRT/x86/msvcr120.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-console-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-datetime-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-debug-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-errorhandling-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-file-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-file-l1-2-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-file-l2-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-handle-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-heap-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-interlocked-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-libraryloader-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-localization-l1-2-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-memory-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-namedpipe-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-processenvironment-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-processthreads-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-processthreads-l1-1-1.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-profile-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-rtlsupport-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-string-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-synch-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-synch-l1-2-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-sysinfo-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-timezone-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-core-util-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-conio-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-convert-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-environment-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-filesystem-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-heap-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-locale-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-math-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-multibyte-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-private-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-process-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-runtime-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-stdio-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-string-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-time-l1-1-0.dll 
-    Microsoft.VC140.CRT/x86/api-ms-win-crt-utility-l1-1-0.dll 
+.msvcrt-x86 =
+    Microsoft.VC110.CRT/x86/msvcp110.dll
+    Microsoft.VC110.CRT/x86/msvcr110.dll
+    Microsoft.VC110.CRT/x86/vcomp110.dll
+    Microsoft.VC120.CRT/x86/msvcp120.dll
+    Microsoft.VC120.CRT/x86/msvcr120.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-console-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-datetime-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-debug-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-errorhandling-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-file-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-file-l1-2-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-file-l2-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-handle-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-heap-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-interlocked-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-libraryloader-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-localization-l1-2-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-memory-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-namedpipe-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-processenvironment-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-processthreads-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-processthreads-l1-1-1.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-profile-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-rtlsupport-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-string-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-synch-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-synch-l1-2-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-sysinfo-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-timezone-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-core-util-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-conio-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-convert-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-environment-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-filesystem-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-heap-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-locale-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-math-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-multibyte-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-private-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-process-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-runtime-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-stdio-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-string-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-time-l1-1-0.dll
+    Microsoft.VC140.CRT/x86/api-ms-win-crt-utility-l1-1-0.dll
     Microsoft.VC140.CRT/x86/concrt140.dll
-    Microsoft.VC140.CRT/x86/mfc140.dll 
-    Microsoft.VC140.CRT/x86/msvcp140.dll 
-    Microsoft.VC140.CRT/x86/ucrtbase.dll 
-    Microsoft.VC140.CRT/x86/vcomp140.dll 
-    Microsoft.VC140.CRT/x86/vcruntime140.dll 
-    Microsoft.VC90.CRT/x86/msvcm90.dll 
-    Microsoft.VC90.CRT/x86/msvcp90.dll 
-    Microsoft.VC90.CRT/x86/msvcr90.dll 
-    Microsoft.VC90.CRT/x86/vcomp90.dll 
+    Microsoft.VC140.CRT/x86/mfc140.dll
+    Microsoft.VC140.CRT/x86/msvcp140.dll
+    Microsoft.VC140.CRT/x86/ucrtbase.dll
+    Microsoft.VC140.CRT/x86/vcomp140.dll
+    Microsoft.VC140.CRT/x86/vcruntime140.dll
+    Microsoft.VC90.CRT/x86/msvcm90.dll
+    Microsoft.VC90.CRT/x86/msvcp90.dll
+    Microsoft.VC90.CRT/x86/msvcr90.dll
+    Microsoft.VC90.CRT/x86/vcomp90.dll
     Microsoft.VC90.CRT/x86/Microsoft.VC90.CRT.manifest
     Microsoft.VC90.CRT/x86/Microsoft.VC90.OpenMP.manifest
     Microsoft.VC90.MFC/x86/Microsoft.VC90.MFC.manifest
-    Microsoft.VC90.MFC/x86/mfc90.dll 
-    Microsoft.VC90.MFC/x86/mfc90u.dll 
+    Microsoft.VC90.MFC/x86/mfc90.dll
+    Microsoft.VC90.MFC/x86/mfc90u.dll
     ;
 
 .msvcrt-x64 =
@@ -1353,7 +1354,7 @@ rule binary-tarball-requirements ( properties * )
     if ! <architecture> in $(properties:G)
     {
         if $(.platform:L) = "x86_64" && <address-model>32 in $(properties) { properties += <architecture>x86 ; }
-        else if $(.platform:L) = "x86" && <address-model>64 in $(properties) { properties += <architecture>x86_64 ; } 
+        else if $(.platform:L) = "x86" && <address-model>64 in $(properties) { properties += <architecture>x86_64 ; }
         else { properties += <architecture>$(.platform:L) ; }
     }
     local linkage ;
@@ -1375,7 +1376,7 @@ rule library-tarball-requirements ( properties * )
 {
     local toolsets = [ feature.get-values <toolset> : $(properties) ] ;
     local variants = [ feature.get-values <variant> : $(properties) ] ;
-    
+
     # require that the location come from --prefix or default; do not allow --libdir or --includedir
     if [ MATCH --libdir=(.*) : [ modules.peek : ARGV ] ] ||
        [ MATCH --includedir=(.*) : [ modules.peek : ARGV ] ]
@@ -1396,7 +1397,7 @@ rule library-tarball-requirements ( properties * )
     if ! <architecture> in $(properties:G)
     {
         if $(.platform:L) = "x86_64" && <address-model>32 in $(properties) { properties += <architecture>x86 ; }
-        else if $(.platform:L) = "x86" && <address-model>64 in $(properties) { properties += <architecture>x86_64 ; } 
+        else if $(.platform:L) = "x86" && <address-model>64 in $(properties) { properties += <architecture>x86_64 ; }
         else { properties += <architecture>$(.platform:L) ; }
     }
     local linkage ;
@@ -1456,7 +1457,7 @@ tar.create boost_$(BOOST_VERSION:J=_).tar.bz2
     <dependency>copy_boost_subset
   ;
 
-.common-src-exclusions = 
+.common-src-exclusions =
     "exclude:.svn"
     "exclude:.git"
     "exclude:*.bak"
@@ -1518,7 +1519,7 @@ This source tree is a subset of the full pwiz source tree.
 constant .common-sources :
     "path-anchor:$(PWIZ_ROOT_PATH)"
     $(.common-src-exclusions)
-    
+
     $(PWIZ_ROOT_PATH)/Jamroot.jam
     $(PWIZ_ROOT_PATH)/NOTICE
     $(PWIZ_ROOT_PATH)/LICENSE
@@ -1543,7 +1544,7 @@ constant .common-sources :
     "path-anchor:$(PWIZ_ROOT_PATH)"
 ;
 
-.l = 
+.l =
     $(PWIZ_LIBRARIES_PATH)/boost-build
     $(PWIZ_LIBRARIES_PATH)/boost_aux
     $(PWIZ_LIBRARIES_PATH)/predef
@@ -1560,7 +1561,7 @@ constant .common-sources :
     "path-anchor:$(PWIZ_ROOT_PATH)"
 ;
 
-.no-t = 
+.no-t =
     "exclude:*Test*.data*"
     "exclude:*Test.?pp"
     "exclude:*TestData.?pp"
