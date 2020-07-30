@@ -1,6 +1,6 @@
-name: CI
+name: Build and Release
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
       - name: Quickbuild
         run: ./quickbuild.bat --i-agree-to-the-vendor-licenses -j 2 address-model=64 msconvert
       - name: Zip
-        run: tar -czvf build.zip build-nt-x86
+        run: tar -czvf msconvert.tar.gz -C build-nt-x86/msvc-release-x86_64 .
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -29,6 +29,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build.zip
-          asset_name: build.zip
-          asset_content_type: application/zip
+          asset_path: ./msconvert.tar.gz
+          asset_name: msconvert.tar.gz
+          asset_content_type: application/gzip
