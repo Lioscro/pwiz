@@ -10,4 +10,4 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@master
       - name: Setup
-        run: quickbuild.bat --i-agree-to-the-vendor-licenses -j 2 address-model=64 msconvert
+        run: ./quickbuild.bat --i-agree-to-the-vendor-licenses -j 2 address-model=64 msconvert
