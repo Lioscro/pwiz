@@ -248,8 +248,7 @@ PWIZ_API_DECL ChromatogramPtr ChromatogramList_Thermo::chromatogram(size_t index
             case MS_photodiode_array_detector:
             {
                 ChromatogramDataPtr cd = rawfile_->getChromatogramData(
-                    Type_MassRange, "", 0, 0, 0,
-                    rawfile_->getFirstScanTime(), rawfile_->getLastScanTime());
+                    Type_MassRange, "", 0, 0, 0, 0, 0);
                 if (getBinaryData) result->setTimeIntensityArrays(cd->times(), cd->intensities(), UO_minute, MS_number_of_detector_counts);
                 else result->defaultArrayLength = cd->size();
             }
@@ -424,7 +423,7 @@ PWIZ_API_DECL void ChromatogramList_Thermo::createIndex() const
                     }
                     else
                     {
-                        addChromatogram("UV " + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_photodiode_array_detector, "");
+                        addChromatogram("UV" + lexical_cast<string>(n), (ControllerType)controllerType, n, MS_photodiode_array_detector, "");
                     }
                 }
                 break; // case Controller_UV
